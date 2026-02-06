@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- app/src/main/res/xml/file_paths.xml -->
+<paths>
+    <external-files-path
+        name="exports"
+        path="exports/" />
+
+    <cache-path
+        name="temp"
+        path="temp/" />
+
+    <cache-path
+        name="models"
+        path="models/" />
+
+    <external-cache-path
+        name="external_cache"
+        path="." />
+</paths>

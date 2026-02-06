@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- app/src/main/res/values/colors.xml -->
+<resources>
+    <color name="primary">#4CAF50</color>
+    <color name="primary_dark">#388E3C</color>
+    <color name="secondary">#795548</color>
+    <color name="accent">#00BCD4</color>
+
+    <color name="background_dark">#1A1A2E</color>
+    <color name="surface_dark">#252540</color>
+
+    <color name="text_primary">#E0E0E0</color>
+    <color name="text_secondary">#B0B0B0</color>
+
+    <color name="success">#81C784</color>
+    <color name="error">#E57373</color>
+    <color name="warning">#FFB74D</color>
+</resources>

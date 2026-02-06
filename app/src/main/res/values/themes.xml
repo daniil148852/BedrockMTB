@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- app/src/main/res/values/themes.xml -->
+<resources>
+    <style name="Theme.BedrockConverter" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/background_dark</item>
+        <item name="android:navigationBarColor">@color/background_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>>@color/purple_700</item>
+        <!-- Customize your theme here. -->
+    </style>
+</resources>
