@@ -1,0 +1,116 @@
+# .github/workflows/build.yml
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BedrockConverter-debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: Upload Release APK (unsigned)
+        uses: actions/upload-artifact@v4
+        with:
+          name: BedrockConverter-release-unsigned
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: Upload Build Reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: |
+            app/build/reports/
+            build/reports/
+          retention-days: 7
+
+  # Optional: Create release with APKs when a tag is pushed
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: BedrockConverter-debug
+          path: ./artifacts/debug
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: BedrockConverter-release-unsigned
+          path: ./artifacts/release
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Bedrock Converter v${{ steps.get_version.outputs.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            ./artifacts/debug/*.apk
+            ./artifacts/release/*.apk
+          body: |
+            ## Bedrock Converter v${{ steps.get_version.outputs.VERSION }}
+            
+            ### Downloads
+            - **Debug APK**: For testing purposes
+            - **Release APK**: Unsigned release build
+            
+            ### Features
+            - Import 3D models (GLB, GLTF, OBJ, FBX)
+            - Preview with rotation, zoom, and pan
+            - Export as Minecraft Bedrock addon (.mcaddon)
+            - Spawn entities with `/summon custom:model_name`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
